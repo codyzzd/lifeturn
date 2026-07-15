@@ -6,8 +6,8 @@ import "@fontsource/inter/600.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "No que sua vida está transformando você?",
-  description: "Uma reflexão guiada sobre os caminhos que a sua vida está criando em você.",
+  title: "Para onde sua vida vai?",
+  description: "Uma reflexão guiada sobre o que recebe sua energia, o retorno que você busca e o que pode estar ficando para trás.",
 };
 
 export const viewport: Viewport = {

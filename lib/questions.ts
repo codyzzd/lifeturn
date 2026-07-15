@@ -1,108 +1,284 @@
-export type Dimension =
-  | "freedom"
-  | "awareness"
-  | "love"
-  | "growth"
-  | "balance"
-  | "presence"
-  | "responsibility"
-  | "purpose";
+export type QuestionType = "single" | "multi" | "range" | "text";
 
-export type Option = { label: string; value: number; key?: string };
+export type Option = {
+  key: string;
+  label: string;
+  description?: string;
+};
 
 export type Question = {
   id: string;
-  dimension: Dimension;
-  eyebrow: string;
+  section: string;
   prompt: string;
-  type: "single" | "multi" | "range" | "text";
+  type: QuestionType;
   options?: Option[];
   min?: number;
   max?: number;
   step?: number;
   minLabel?: string;
   maxLabel?: string;
+  valueSuffix?: string;
+  maxSelections?: number;
   optional?: boolean;
-  scored?: boolean;
   helper?: string;
 };
 
+const directionOptions: Option[] = [
+  ["work", "Trabalho ou carreira"],
+  ["money", "Dinheiro ou crescimento financeiro"],
+  ["family", "Família"],
+  ["romantic", "Relacionamento amoroso"],
+  ["body", "Corpo ou aparência"],
+  ["health", "Saúde"],
+  ["spirituality", "Religião ou espiritualidade"],
+  ["service", "Ajudar ou servir outras pessoas"],
+  ["study", "Estudo ou conhecimento"],
+  ["travel", "Viagens e experiências"],
+  ["entertainment", "Entretenimento"],
+  ["social", "Vida social"],
+  ["freedom", "Liberdade pessoal"],
+  ["other", "Outra área"],
+].map(([key, label]) => ({ key, label }));
+
 const frequency: Option[] = [
-  { label: "Nunca", value: 0 },
-  { label: "Raramente", value: 25 },
-  { label: "Às vezes", value: 50 },
-  { label: "Frequentemente", value: 75 },
-  { label: "Quase sempre", value: 100 },
-];
+  ["never", "Nunca"],
+  ["rarely", "Raramente"],
+  ["sometimes", "Às vezes"],
+  ["often", "Frequentemente"],
+  ["almost-always", "Quase sempre"],
+].map(([key, label]) => ({ key, label }));
 
 const agreement: Option[] = [
-  { label: "Nada", value: 0 },
-  { label: "Pouco", value: 25 },
-  { label: "Moderadamente", value: 50 },
-  { label: "Bastante", value: 75 },
-  { label: "Muito", value: 100 },
-];
+  ["strongly-disagree", "Discordo totalmente"],
+  ["disagree", "Discordo"],
+  ["unsure", "Não tenho certeza"],
+  ["agree", "Concordo"],
+  ["strongly-agree", "Concordo totalmente"],
+].map(([key, label]) => ({ key, label }));
 
 export const questions: Question[] = [
-  { id: "freedom-time", dimension: "freedom", eyebrow: "Liberdade interior", prompt: "Com que frequência você sente que consegue escolher conscientemente como usa seu tempo?", type: "single", options: frequency },
-  { id: "freedom-habits", dimension: "freedom", eyebrow: "Liberdade interior", prompt: "Existem hábitos que você continua repetindo mesmo sabendo que gostaria de parar?", type: "single", options: [...agreement].reverse().map((item, index) => ({ ...item, value: index * 25 })) },
-  { id: "freedom-no", dimension: "freedom", eyebrow: "Liberdade interior", prompt: "Quando algo não combina com o que você quer para sua vida, você consegue dizer “não”?", type: "single", options: frequency },
-
-  { id: "awareness-person", dimension: "awareness", eyebrow: "Consciência", prompt: "Com que frequência você para para pensar no tipo de pessoa que está se tornando?", type: "single", options: frequency },
-  { id: "awareness-patterns", dimension: "awareness", eyebrow: "Consciência", prompt: "Você consegue perceber padrões que continuam se repetindo na sua vida?", type: "single", options: agreement },
-  { id: "awareness-learn", dimension: "awareness", eyebrow: "Consciência", prompt: "Quando alguma coisa dá errado, você tenta entender o que pode aprender com aquilo?", type: "single", options: frequency },
-
-  { id: "love-differences", dimension: "love", eyebrow: "Capacidade de amar", prompt: "Você sente que está aprendendo a compreender melhor pessoas diferentes de você?", type: "single", options: agreement },
-  { id: "love-depth", dimension: "love", eyebrow: "Capacidade de amar", prompt: "Seus relacionamentos mais próximos estão se tornando mais profundos ou mais distantes?", type: "single", options: [
-    { label: "Muito mais distantes", value: 0 }, { label: "Um pouco mais distantes", value: 25 }, { label: "Permanecem parecidos", value: 50 }, { label: "Um pouco mais profundos", value: 75 }, { label: "Muito mais profundos", value: 100 },
-  ] },
-  { id: "love-hurt", dimension: "love", eyebrow: "Capacidade de amar", prompt: "Quando alguém machuca você, com o tempo consegue processar aquilo sem permanecer preso ao ressentimento?", type: "single", options: frequency },
-
-  { id: "growth-maturity", dimension: "growth", eyebrow: "Crescimento", prompt: "Você sente que é uma pessoa diferente e mais madura do que era há alguns anos?", type: "single", options: agreement },
-  { id: "growth-change", dimension: "growth", eyebrow: "Crescimento", prompt: "Quando percebe um problema em si mesmo, costuma transformar essa percepção em alguma mudança?", type: "single", options: frequency },
-  { id: "growth-experiences", dimension: "growth", eyebrow: "Crescimento", prompt: "Quais experiências difíceis realmente mudaram sua forma de viver?", type: "multi", scored: false, helper: "Selecione quantas fizerem sentido.", options: [
-    "Relacionamentos", "Família", "Trabalho", "Perdas", "Dinheiro", "Saúde", "Espiritualidade", "Erros pessoais", "Ainda não sei",
-  ].map((label) => ({ label, value: 50, key: label })) },
-
-  { id: "balance-area", dimension: "balance", eyebrow: "Equilíbrio", prompt: "Alguma área ocupa tanto espaço que outras partes importantes da sua vida estão sendo negligenciadas?", type: "single", scored: false, options: [
-    "Trabalho", "Dinheiro", "Corpo e aparência", "Relacionamentos", "Religião", "Jogos ou entretenimento", "Redes sociais", "Estudos", "Nenhuma",
-  ].map((label) => ({ label, value: 50, key: label })) },
-  { id: "balance-dominance", dimension: "balance", eyebrow: "Equilíbrio", prompt: "Quanto essa área domina seus pensamentos hoje?", type: "range", min: 0, max: 10, step: 1, minLabel: "Quase nada", maxLabel: "O tempo todo", helper: "Uma área importante também pode ocupar espaço demais.", scored: true },
-  { id: "balance-rest", dimension: "balance", eyebrow: "Equilíbrio", prompt: "Você consegue descansar sem sentir que deveria estar produzindo, resolvendo ou cuidando de algo?", type: "single", options: frequency },
-
-  { id: "presence-distraction", dimension: "presence", eyebrow: "Presença", prompt: "Quando está triste, ansioso ou frustrado, com que frequência procura distração só para não pensar no que sente?", type: "single", options: [...frequency].reverse().map((item, index) => ({ ...item, value: index * 25 })) },
-  { id: "presence-escape", dimension: "presence", eyebrow: "Presença", prompt: "Qual destas coisas você mais usa para escapar de problemas?", type: "single", scored: false, helper: "A resposta ajuda a observar um padrão; não é um diagnóstico.", options: [
-    "Jogos", "Filmes e séries", "Redes sociais", "Comida", "Sexo ou pornografia", "Compras", "Trabalho", "Álcool ou outras substâncias", "Religião", "Sono", "Não sinto que faço isso",
-  ].map((label) => ({ label, value: 50, key: label })) },
-  { id: "presence-feelings", dimension: "presence", eyebrow: "Presença", prompt: "Você consegue permanecer com uma emoção difícil tempo suficiente para entender o que ela tenta mostrar?", type: "single", options: frequency },
-
-  { id: "responsibility-conflict", dimension: "responsibility", eyebrow: "Responsabilidade", prompt: "Quando um conflito se repete, como você costuma enxergar sua participação?", type: "single", options: [
-    { label: "O problema está quase sempre nos outros", value: 10 }, { label: "Geralmente está mais nos outros", value: 30 }, { label: "Tento olhar para os dois lados", value: 100 }, { label: "Assumo que está mais em mim", value: 65 }, { label: "Depende da situação", value: 75 },
-  ] },
-  { id: "responsibility-wrong", dimension: "responsibility", eyebrow: "Responsabilidade", prompt: "Quando percebe que estava errado, qual é sua reação mais comum?", type: "single", options: [
-    { label: "Defendo minha posição", value: 10 }, { label: "Evito pensar nisso", value: 20 }, { label: "Sinto culpa, mas não mudo", value: 35 }, { label: "Tento reparar e mudar", value: 100 }, { label: "Depende da situação", value: 65 },
-  ] },
-
-  { id: "purpose-future", dimension: "purpose", eyebrow: "Propósito", prompt: "Se continuar vivendo exatamente como vive hoje pelos próximos 10 anos, você gostaria da pessoa que provavelmente se tornaria?", type: "single", options: [
-    { label: "Definitivamente não", value: 0 }, { label: "Provavelmente não", value: 25 }, { label: "Não sei", value: 50 }, { label: "Provavelmente sim", value: 75 }, { label: "Definitivamente sim", value: 100 },
-  ] },
-  { id: "purpose-alignment", dimension: "purpose", eyebrow: "Propósito", prompt: "Quanto da sua vida atual parece alinhada ao que você considera realmente importante?", type: "range", min: 0, max: 100, step: 5, minLabel: "0%", maxLabel: "100%", scored: true },
-
-  { id: "love-care", dimension: "love", eyebrow: "Capacidade de amar", prompt: "As pessoas mais próximas de você — família, parceiro ou amigos — recebem tempo, atenção e cuidado compatíveis com a importância que têm na sua vida?", type: "single", options: frequency },
-  { id: "balance-space", dimension: "balance", eyebrow: "Equilíbrio", prompt: "Sua rotina deixa espaço real para relacionamentos, saúde, descanso e responsabilidades importantes, além de trabalho e entretenimento?", type: "single", options: frequency },
-
-  { id: "open-pattern", dimension: "awareness", eyebrow: "Para levar com você", prompt: "Qual problema parece continuar se repetindo na sua vida?", type: "text", optional: true, scored: false, helper: "Opcional. Sua resposta fica somente neste dispositivo." },
-  { id: "open-experience", dimension: "growth", eyebrow: "Para levar com você", prompt: "Qual experiência mais mudou você até hoje?", type: "text", optional: true, scored: false, helper: "Opcional. Escreva do seu jeito." },
-  { id: "open-change", dimension: "purpose", eyebrow: "Para levar com você", prompt: "O que você sente que precisa mudar, mas continua adiando?", type: "text", optional: true, scored: false, helper: "Opcional. Talvez nomear já seja um começo." },
+  {
+    id: "q1-direction-energy",
+    section: "O que está recebendo sua vida?",
+    prompt: "Qual área recebe hoje a maior parte da sua energia?",
+    type: "single",
+    options: directionOptions,
+  },
+  {
+    id: "q2-direction-mind",
+    section: "O que está recebendo sua vida?",
+    prompt: "Qual área mais ocupa sua mente, mesmo quando você não está cuidando dela?",
+    type: "single",
+    options: directionOptions,
+  },
+  {
+    id: "q3-next-goal",
+    section: "O que está recebendo sua vida?",
+    prompt: "Quanto da sua vida atual parece organizada em torno de alcançar a próxima meta?",
+    type: "range",
+    min: 0,
+    max: 10,
+    step: 1,
+    minLabel: "Quase nada",
+    maxLabel: "Quase tudo",
+  },
+  {
+    id: "q4-satisfaction-duration",
+    section: "O que está recebendo sua vida?",
+    prompt: "Quando você conquista algo importante, quanto tempo a satisfação costuma durar?",
+    type: "single",
+    options: [
+      { key: "hours", label: "Minutos ou horas" },
+      { key: "days", label: "Alguns dias" },
+      { key: "weeks", label: "Algumas semanas" },
+      { key: "months", label: "Alguns meses" },
+      { key: "lasting", label: "Costuma produzir satisfação duradoura" },
+      { key: "unsure", label: "Não tenho certeza" },
+    ],
+  },
+  {
+    id: "q5-desired-returns",
+    section: "O que você espera receber?",
+    prompt: "O que você mais espera que seus esforços atuais lhe deem no futuro?",
+    type: "multi",
+    maxSelections: 3,
+    helper: "Escolha até três respostas.",
+    options: [
+      ["freedom", "Liberdade"], ["security", "Segurança"], ["peace", "Paz"], ["love", "Amor"],
+      ["time", "Mais tempo"], ["recognition", "Reconhecimento"], ["respect", "Respeito"],
+      ["confidence", "Confiança"], ["control", "Controle"], ["belonging", "Pertencimento"],
+      ["purpose", "Propósito"], ["happiness", "Felicidade"], ["independence", "Independência"],
+      ["family-life", "Uma vida melhor para minha família"], ["enough", "Sentir que sou suficiente"],
+      ["other", "Outra coisa"],
+    ].map(([key, label]) => ({ key, label })),
+  },
+  {
+    id: "q6-current-drive",
+    section: "O que você espera receber?",
+    prompt: "Qual frase mais se aproxima da sua vida hoje?",
+    type: "single",
+    options: [
+      ["meaning", "Estou construindo algo significativo."],
+      ["security", "Estou tentando criar segurança."],
+      ["prove", "Estou tentando provar alguma coisa."],
+      ["behind", "Estou tentando não ficar para trás."],
+      ["enough", "Estou tentando finalmente me sentir suficiente."],
+      ["escape", "Estou tentando escapar de alguma coisa."],
+      ["survive", "Na maior parte do tempo, estou tentando sobreviver."],
+      ["unsure", "Não sei ao certo para onde estou indo."],
+    ].map(([key, label]) => ({ key, label })),
+  },
+  {
+    id: "q7-freedom-change",
+    section: "Isso está funcionando?",
+    prompt: "Comparado a alguns anos atrás, quanto mais livre você se sente hoje?",
+    type: "range",
+    min: 0,
+    max: 10,
+    step: 1,
+    minLabel: "Muito menos livre",
+    maxLabel: "Muito mais livre",
+  },
+  {
+    id: "q8-peace-change",
+    section: "Isso está funcionando?",
+    prompt: "Comparado a alguns anos atrás, quanto mais em paz você se sente hoje?",
+    type: "range",
+    min: 0,
+    max: 10,
+    step: 1,
+    minLabel: "Muito menos em paz",
+    maxLabel: "Muito mais em paz",
+  },
+  {
+    id: "q9-return-delivered",
+    section: "Isso está funcionando?",
+    prompt: "As coisas às quais dedico a maior parte da minha vida estão me dando o retorno emocional que eu esperava.",
+    type: "single",
+    options: agreement,
+  },
+  {
+    id: "q10-one-more-goal",
+    section: "Isso está funcionando?",
+    prompt: "Sinto que preciso alcançar mais uma meta antes de poder relaxar ou aproveitar plenamente a vida.",
+    type: "single",
+    options: frequency,
+  },
+  {
+    id: "q11-best-attention",
+    section: "O que pode estar pagando o custo?",
+    prompt: "As pessoas que digo serem mais importantes recebem uma parte significativa da minha melhor atenção, e não apenas o que sobra.",
+    type: "single",
+    options: frequency,
+  },
+  {
+    id: "q12-mental-presence",
+    section: "O que pode estar pagando o custo?",
+    prompt: "Quando estou com pessoas que amo, costumo estar mentalmente presente com elas.",
+    type: "single",
+    options: frequency,
+  },
+  {
+    id: "q13-hidden-costs",
+    section: "O que pode estar pagando o custo?",
+    prompt: "O que provavelmente recebe menos atenção por causa da forma como você vive hoje?",
+    type: "multi",
+    maxSelections: 3,
+    helper: "Escolha até três respostas.",
+    options: [
+      ["family", "Família"], ["romantic", "Relacionamento amoroso"], ["friendships", "Amizades"],
+      ["health", "Saúde"], ["rest", "Descanso"], ["peace", "Paz"], ["spirituality", "Vida espiritual"],
+      ["growth", "Crescimento pessoal"], ["service", "Serviço ao próximo"], ["creativity", "Criatividade"],
+      ["fun", "Diversão"], ["alone", "Tempo sozinho"], ["none", "Nada importante"], ["unsure", "Não tenho certeza"],
+    ].map(([key, label]) => ({ key, label })),
+  },
+  {
+    id: "q14-ten-year-worry",
+    section: "O que pode estar pagando o custo?",
+    prompt: "Se você continuasse vivendo exatamente assim pelos próximos dez anos, o que mais lhe preocuparia?",
+    type: "single",
+    options: [
+      ["distance", "Ficar distante das pessoas que amo"], ["health", "Perder minha saúde"],
+      ["time", "Desperdiçar tempo demais"], ["anxiety", "Ficar mais ansioso"],
+      ["achievement", "Tornar-me dependente de conquistas"], ["numb", "Ficar emocionalmente anestesiado"],
+      ["money-no-meaning", "Ter dinheiro, mas pouco significado"], ["experiences-no-depth", "Ter experiências, mas pouca profundidade"],
+      ["resentment", "Tornar-me ressentido"], ["unrecognizable", "Tornar-me alguém que não reconheço"],
+      ["none", "Nada em particular"], ["unsure", "Não tenho certeza"],
+    ].map(([key, label]) => ({ key, label })),
+  },
+  {
+    id: "q15-identity-stability",
+    section: "O que é essencial?",
+    prompt: "Se dinheiro, cargo, aparência, posses e reconhecimento desaparecessem, quanto da sua identidade permaneceria estável?",
+    type: "range",
+    min: 0,
+    max: 10,
+    step: 1,
+    minLabel: "Muito pouco",
+    maxLabel: "Quase tudo",
+  },
+  {
+    id: "q16-unseen-investment",
+    section: "O que é essencial?",
+    prompt: "Quanto da sua semana é investido em coisas que ainda importariam profundamente se ninguém pudesse ver, elogiar ou recompensar você?",
+    type: "range",
+    min: 0,
+    max: 100,
+    step: 5,
+    minLabel: "Quase nada",
+    maxLabel: "Quase tudo",
+    valueSuffix: "%",
+  },
+  {
+    id: "q17-uncomfortable-truth",
+    section: "O que é essencial?",
+    prompt: "Qual frase incomoda mais porque talvez seja parcialmente verdadeira?",
+    type: "single",
+    helper: "Uma resposta não define você; ela apenas aponta algo que pode valer observar.",
+    options: [
+      ["work-family", "Trabalho por pessoas com quem quase não passo tempo."],
+      ["freedom-trap", "Busco liberdade de um jeito que está me deixando menos livre."],
+      ["enough-achievement", "Tento me sentir suficiente por meio de conquistas."],
+      ["busy-avoidance", "Mantenho-me ocupado para não precisar encarar alguma coisa."],
+      ["achieve-not-love", "Estou melhor em conquistar, mas não necessariamente em amar."],
+      ["broad-neglect", "Dou energia a muitas pessoas e negligencio quem está mais perto."],
+      ["future-life", "Espero uma versão futura da vida antes de me permitir viver."],
+      ["none", "Nenhuma dessas frases parece verdadeira."],
+    ].map(([key, label]) => ({ key, label })),
+  },
+  {
+    id: "q18-postponed-change",
+    section: "Transformação e resistência",
+    prompt: "Existe algo que você deseja mudar há muito tempo, mas continua adiando?",
+    type: "single",
+    options: [
+      ["yes", "Sim, claramente"], ["probably", "Provavelmente"], ["unsure", "Não tenho certeza"],
+      ["probably-not", "Provavelmente não"], ["no", "Não"],
+    ].map(([key, label]) => ({ key, label })),
+  },
+  {
+    id: "q19-change-response",
+    section: "Transformação e resistência",
+    prompt: "Quando a vida me mostra repetidamente o mesmo problema, costumo mudar algo na forma como vivo.",
+    type: "single",
+    options: frequency,
+  },
+  {
+    id: "q20-waiting-easier",
+    section: "Transformação e resistência",
+    prompt: "Existe algo que já sei que deveria fazer diferente, mas continuo esperando que fique mais fácil.",
+    type: "single",
+    options: agreement,
+    helper: "Considere o que tem se repetido, não apenas um dia difícil.",
+  },
+  {
+    id: "q21-open-change",
+    section: "Para levar com você",
+    prompt: "Sem pensar demais: o que você já suspeita que precisa mudar na sua vida?",
+    type: "text",
+    optional: true,
+    helper: "Opcional · sua resposta permanece somente neste dispositivo.",
+  },
 ];
 
-export const dimensionLabels: Record<Dimension, string> = {
-  freedom: "Liberdade interior",
-  awareness: "Consciência",
-  love: "Amor",
-  growth: "Crescimento",
-  balance: "Equilíbrio",
-  presence: "Presença",
-  responsibility: "Responsabilidade",
-  purpose: "Propósito",
-};
+export const scoredQuestionCount = 20;
