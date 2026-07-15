@@ -65,6 +65,31 @@ const guidance: Record<Dimension, { keep: string; observe: string; try: string }
   purpose: { keep: "Mantenha perto as escolhas que combinam com o que importa para você.", observe: "Perceba onde seus dias e seus valores estão contando histórias diferentes.", try: "Escolha uma ação de 10 minutos que aproxime sua semana do que é importante." },
 };
 
+const growthMeaning: Record<Dimension, string> = {
+  freedom: "Escolher melhor como usa seu tempo, estabelecer limites e depender menos de hábitos que decidem por você.",
+  awareness: "Reconhecer padrões, refletir sobre quem está se tornando e aprender com aquilo que não saiu bem.",
+  love: "Dar presença e cuidado aos vínculos próximos, compreender diferenças e não permanecer preso ao ressentimento.",
+  growth: "Transformar percepções e experiências difíceis em mudanças reais, não apenas em boas intenções.",
+  balance: "Impedir que trabalho, entretenimento ou outra área ocupe o espaço de relações, descanso e responsabilidades importantes.",
+  presence: "Enfrentar emoções com mais honestidade e usar menos distrações para fugir do que precisa ser compreendido.",
+  responsibility: "Enxergar sua participação nos conflitos, reparar impactos e mudar a própria atitude quando necessário.",
+  purpose: "Aproximar o uso dos seus dias daquilo que considera importante e da pessoa que deseja construir no longo prazo.",
+};
+
+export function getGrowthAreas(scores: DimensionScores) {
+  return dimensions
+    .map((key) => ({
+      key,
+      label: dimensionLabels[key],
+      score: scores[key],
+      gap: 100 - scores[key],
+      meaning: growthMeaning[key],
+      action: guidance[key].try,
+    }))
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3);
+}
+
 export function getRecommendations(scores: DimensionScores) {
   const { strongest, attention } = getHighlights(scores);
   return {

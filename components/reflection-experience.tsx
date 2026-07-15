@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Share, Trash } from "./icons";
 import { dimensionLabels, questions, type Dimension, type Question } from "@/lib/questions";
-import { calculateScores, getBand, getHighlights, getPattern, getRecommendations, type Answer, type DimensionScores } from "@/lib/results";
+import { calculateScores, getBand, getGrowthAreas, getHighlights, getPattern, type Answer, type DimensionScores } from "@/lib/results";
 
 type Stage = "landing" | "questions" | "result";
 type SavedState = { version: 1; stage: Stage; index: number; answers: Record<string, Answer>; completedAt?: string };
@@ -100,18 +100,18 @@ export default function ReflectionExperience() {
 
 function Landing({ hasProgress, onStart, onEraseAndStart }: { hasProgress: boolean; onStart: () => void; onEraseAndStart: () => void }) {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 pb-8 pt-8 sm:px-10 sm:pt-12 lg:px-16 lg:pb-14 lg:pt-14">
+    <main className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 pb-8 pt-8 sm:px-10 sm:pt-12 lg:px-16 lg:pb-8 lg:pt-8">
       <p className="question-enter text-[12px] font-medium uppercase tracking-[.28em] text-[var(--muted)] sm:text-sm">Reflexão · 5 min</p>
 
-      <div className="my-auto grid items-end gap-10 py-14 lg:grid-cols-[1.14fr_.64fr] lg:gap-24 lg:py-16">
+      <div className="my-auto grid items-end gap-10 py-14 lg:grid-cols-[1fr_.76fr] lg:gap-16 lg:py-8">
         <section>
-          <h1 className="font-editorial question-enter stagger-1 max-w-[980px] text-balance text-[clamp(3.65rem,10.4vw,9.5rem)] font-normal leading-[.78] tracking-[-.055em]">
-            No que sua vida está transformando <em className="font-normal text-[var(--accent)]">você?</em>
+          <h1 className="font-editorial question-enter stagger-1 max-w-[980px] text-balance text-[clamp(3.65rem,8vw,8rem)] font-normal leading-[.82] tracking-[-.055em]">
+            No que sua vida está transformando <em className="font-normal not-italic text-[var(--accent)]">você?</em>
           </h1>
         </section>
 
         <section className="question-enter stagger-2 max-w-2xl lg:pb-2">
-          <p className="text-pretty text-lg leading-relaxed text-[var(--muted)] sm:text-xl lg:text-[1.35rem]">
+          <p className="text-pretty text-lg leading-relaxed text-[var(--muted)] sm:text-xl lg:text-[1.15rem]">
             Você vive, trabalha, ama, sofre, descansa, erra, conquista e recomeça. Mas existe uma pergunta que quase nunca fazemos:
           </p>
           <p className="mt-5 text-pretty text-[1.35rem] leading-snug tracking-[-.02em] sm:text-2xl">
@@ -121,7 +121,7 @@ function Landing({ hasProgress, onStart, onEraseAndStart }: { hasProgress: boole
             Esta reflexão observa hábitos, prioridades, relações, desejos e padrões — sem respostas certas, diagnósticos ou julgamentos.
           </p>
 
-          <div className="question-enter stagger-3 mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+          <div className="question-enter stagger-3 mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:mt-6">
             <button onClick={onStart} className="primary-button flex min-h-14 items-center justify-center gap-4 rounded-full bg-[var(--ink)] py-3.5 pl-6 pr-[22px] text-base font-medium text-white sm:min-h-16 sm:px-8 sm:pr-[30px] sm:text-lg">
               {hasProgress ? "Continuar de onde parei" : "Começar reflexão"}
               <ArrowRight className="size-5" />
@@ -181,7 +181,7 @@ function QuestionFlow({ index, answers, onAnswer, onBack, onNext, onRestart }: {
       <div className="mx-auto flex min-h-[calc(100vh-7rem)] max-w-[1240px] flex-col justify-center py-10 sm:h-[calc(100dvh-6.75rem)] sm:min-h-0 sm:py-5 lg:grid lg:grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-14 lg:py-5 xl:gap-20">
         <div className="question-enter lg:self-center">
           <p className="mb-5 text-[12px] font-medium uppercase tracking-[.22em] text-[var(--accent)] sm:mb-5 sm:text-sm">{question.eyebrow}</p>
-          <h1 className="font-editorial max-w-[1120px] text-balance text-[clamp(2.55rem,6.3vw,4.6rem)] font-medium leading-[.95] tracking-[-.04em] lg:text-[clamp(3rem,4.3vw,4.5rem)]">{question.prompt}</h1>
+          <h1 className="font-editorial max-w-[1120px] text-balance text-[clamp(2.55rem,6.3vw,4.6rem)] font-normal leading-[.95] tracking-[-.04em] lg:text-[clamp(3rem,4.3vw,4.5rem)]">{question.prompt}</h1>
           {question.helper && <p className="mt-4 max-w-xl text-pretty text-sm leading-relaxed text-[var(--muted)] sm:text-base">{question.helper}</p>}
         </div>
 
@@ -251,7 +251,7 @@ function RangeAnswer({ question, answer, onAnswer, onNext }: { question: Questio
   }, [answer, onAnswer, question.id, value]);
   return (
     <div className="soft-card rounded-[30px] bg-[var(--surface)] p-6 sm:p-9 lg:p-10">
-      <div className="font-editorial tabular mb-7 text-center text-6xl font-medium text-[var(--accent)] sm:text-7xl">{display}</div>
+      <div className="font-editorial tabular mb-7 text-center text-6xl font-normal text-[var(--accent)] sm:text-7xl">{display}</div>
       <input aria-label={question.prompt} type="range" min={min} max={max} step={question.step ?? 1} value={value} onChange={(event) => onAnswer(question.id, Number(event.target.value))} style={{ "--range-progress": `${progress}%` } as React.CSSProperties} />
       <div className="mt-5 flex justify-between gap-6 text-xs text-[var(--muted)] sm:text-sm"><span>{question.minLabel}</span><span className="text-right">{question.maxLabel}</span></div>
       <ContinueButton onClick={onNext}>Continuar</ContinueButton>
@@ -280,9 +280,14 @@ function ContinueButton({ children, onClick, disabled = false }: { children: Rea
 
 function Result({ answers, completedAt, onRestart }: { answers: Record<string, Answer>; completedAt?: string; onRestart: () => void }) {
   const { dimensions: scores, overall } = useMemo(() => calculateScores(answers), [answers]);
+  const writtenReflections = useMemo(() => questions.flatMap((question) => {
+    const answer = answers[question.id];
+    if (question.type !== "text" || typeof answer !== "string" || !answer.trim()) return [];
+    return [{ id: question.id, prompt: question.prompt, answer: answer.trim() }];
+  }), [answers]);
   const band = getBand(overall);
   const highlights = getHighlights(scores);
-  const recommendations = getRecommendations(scores);
+  const growthAreas = getGrowthAreas(scores);
   const [shareState, setShareState] = useState("Compartilhar resultado");
 
   const shareResult = async () => {
@@ -320,7 +325,7 @@ function Result({ answers, completedAt, onRestart }: { answers: Record<string, A
         <p className="mb-4 text-sm font-medium uppercase tracking-[.22em] text-[var(--accent)]">Sua direção atual</p>
         <div className="grid items-end gap-10 lg:grid-cols-[1fr_280px] lg:gap-20">
           <div>
-            <h1 className="font-editorial max-w-5xl text-balance text-[clamp(3.5rem,8vw,8rem)] font-medium leading-[.8] tracking-[-.05em]">{band.title}</h1>
+            <h1 className="font-editorial max-w-5xl text-balance text-[clamp(3.5rem,8vw,8rem)] font-normal leading-[.8] tracking-[-.05em]">{band.title}</h1>
             <p className="mt-7 max-w-3xl text-pretty text-base leading-relaxed text-[var(--muted)] sm:text-xl">{band.description}</p>
           </div>
           <div className="lg:text-right">
@@ -330,7 +335,7 @@ function Result({ answers, completedAt, onRestart }: { answers: Record<string, A
         </div>
 
         <DirectionScale score={overall} />
-        <p className="mt-5 max-w-3xl text-pretty text-sm leading-relaxed text-[var(--muted)]">Esta pontuação não mede seu valor como pessoa. Ela representa somente tendências percebidas nas respostas que você deu hoje{completedAt ? "." : "."}</p>
+        <p className="mt-5 max-w-4xl text-pretty text-sm leading-relaxed text-[var(--muted)]">Sua nota é a média das oito dimensões, todas com o mesmo peso. Gostar da vida que leva influencia apenas parte de Propósito; isso não compensa notas baixas em Amor, Presença, Equilíbrio ou Responsabilidade. O resultado não mede seu valor como pessoa nem representa um diagnóstico{completedAt ? "." : "."}</p>
       </section>
 
       <section className="mx-auto grid max-w-[1240px] gap-5 border-t border-[var(--line)] py-12 sm:py-16 lg:grid-cols-[.84fr_1.16fr] lg:gap-8">
@@ -342,18 +347,13 @@ function Result({ answers, completedAt, onRestart }: { answers: Record<string, A
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1240px] border-t border-[var(--line)] py-12 sm:py-16">
-        <p className="mb-8 text-sm font-medium uppercase tracking-[.22em] text-[var(--accent)]">Três orientações para os próximos 7 dias</p>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Guidance number="01" title="Continue" text={recommendations.keep} />
-          <Guidance number="02" title="Observe" text={recommendations.observe} />
-          <Guidance number="03" title="Experimente" text={recommendations.try} />
-        </div>
-      </section>
+      {writtenReflections.length > 0 && <WrittenReflections reflections={writtenReflections} />}
+
+      <GrowthPath areas={growthAreas} overall={overall} />
 
       <section className="mx-auto max-w-[1240px] overflow-hidden rounded-[34px] bg-[var(--ink)] px-6 py-10 text-white sm:rounded-[48px] sm:px-12 sm:py-14 lg:px-16 lg:py-16">
         <p className="text-sm uppercase tracking-[.22em] text-[var(--accent-soft)]">Uma pergunta para continuar</p>
-        <h2 className="font-editorial mt-5 max-w-5xl text-balance text-[clamp(2.8rem,6vw,6.2rem)] font-medium leading-[.9] tracking-[-.04em]">A vida que você está vivendo está transformando você em alguém que gostaria de continuar sendo?</h2>
+        <h2 className="font-editorial mt-5 max-w-5xl text-balance text-[clamp(2.8rem,6vw,6.2rem)] font-normal leading-[.9] tracking-[-.04em]">O que ainda precisa crescer em você para que sua vida não apenas funcione para você, mas também faça bem às pessoas que ama e à pessoa que está se tornando?</h2>
         <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row">
           <button onClick={shareResult} className="primary-button flex min-h-14 items-center gap-3 rounded-full bg-[var(--surface)] py-3 pl-6 pr-[22px] font-medium text-[var(--ink)] hover:bg-white sm:min-h-16 sm:px-8 sm:pr-[30px]"><Share className="size-5" /> {shareState}</button>
           <button onClick={onRestart} className="flex min-h-14 items-center gap-3 rounded-full px-5 text-white/75 transition-[color,scale] duration-150 hover:text-white active:scale-[.96]"><Trash className="size-5" /> Apagar e começar</button>
@@ -361,6 +361,73 @@ function Result({ answers, completedAt, onRestart }: { answers: Record<string, A
         <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/50">A imagem mostra somente sua faixa de resultado e uma frase curta. Nenhuma resposta privada é incluída.</p>
       </section>
     </main>
+  );
+}
+
+function GrowthPath({ areas, overall }: { areas: ReturnType<typeof getGrowthAreas>; overall: number }) {
+  return (
+    <section className="mx-auto max-w-[1240px] border-t border-[var(--line)] py-12 sm:py-16" aria-labelledby="growth-path-title">
+      <div className="grid gap-8 lg:grid-cols-[1fr_.78fr] lg:items-end lg:gap-16">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[.22em] text-[var(--accent)]">Como avançar da sua nota atual</p>
+          <h2 id="growth-path-title" className="font-editorial mt-3 max-w-3xl text-balance text-[clamp(2.75rem,5vw,4.75rem)] font-normal leading-[.88] tracking-[-.04em]">Seu caminho mais direto para crescer</h2>
+        </div>
+        <div className="rounded-[24px] bg-[var(--paper-deep)] p-5 sm:p-6">
+          <p className="text-sm font-medium text-[var(--ink)]">O que significa chegar perto de 100?</p>
+          <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--muted)]">Não significa ser perfeito. Significa responder de forma consistentemente saudável nas oito áreas. Partindo de <strong className="tabular font-semibold text-[var(--ink)]">{overall}/100</strong>, o caminho mais útil é fortalecer primeiro as dimensões abaixo.</p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid gap-4 lg:grid-cols-3">
+        {areas.map((area, index) => (
+          <article key={area.key} className="soft-card flex h-full flex-col rounded-[28px] bg-[var(--surface)] p-6 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[.16em] text-[var(--accent)]">Prioridade {String(index + 1).padStart(2, "0")}</p>
+                <h3 className="font-editorial mt-2 text-balance text-3xl font-normal leading-none tracking-[-.025em] sm:text-4xl">{area.label}</h3>
+              </div>
+              <p className="font-editorial tabular shrink-0 text-4xl leading-none text-[var(--accent)]">{area.score}<span className="text-xl text-[var(--muted)]">/100</span></p>
+            </div>
+
+            <div className="mt-6 h-2 overflow-hidden rounded-full bg-[var(--line)]" aria-hidden="true">
+              <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${area.score}%` }} />
+            </div>
+            <p className="tabular mt-2 text-xs text-[var(--muted)]">Espaço de crescimento nesta dimensão: {area.gap} pontos</p>
+
+            <p className="mt-6 text-xs font-medium uppercase tracking-[.14em] text-[var(--muted)]">Uma nota mais alta representa</p>
+            <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--ink)] sm:text-base">{area.meaning}</p>
+
+            <div className="mt-6 rounded-[18px] bg-[var(--paper)] p-4 sm:p-5 lg:mt-auto lg:translate-y-2">
+              <p className="text-xs font-medium uppercase tracking-[.14em] text-[var(--accent)]">Próximo passo nesta semana</p>
+              <p className="mt-2 text-pretty text-sm leading-relaxed text-[var(--muted)]">{area.action}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WrittenReflections({ reflections }: { reflections: { id: string; prompt: string; answer: string }[] }) {
+  return (
+    <section className="mx-auto max-w-[1240px] border-t border-[var(--line)] py-12 sm:py-16" aria-labelledby="written-reflections-title">
+      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:mb-10 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-sm font-medium uppercase tracking-[.22em] text-[var(--accent)]">Reflexões pessoais</p>
+          <h2 id="written-reflections-title" className="font-editorial mt-3 text-balance text-[clamp(2.75rem,5vw,4.75rem)] font-normal leading-[.88] tracking-[-.04em]">Suas próprias palavras</h2>
+        </div>
+        <p className="rounded-full bg-[var(--paper-deep)] px-4 py-2 text-xs font-medium text-[var(--muted)] sm:text-sm">Privado · somente neste dispositivo</p>
+      </div>
+
+      <div className={`grid gap-4 ${reflections.length > 1 ? "lg:grid-cols-2" : ""}`}>
+        {reflections.map((reflection, index) => (
+          <article key={reflection.id} className={`soft-card rounded-[28px] bg-[var(--surface)] p-6 sm:rounded-[32px] sm:p-8 ${reflections.length === 3 && index === 2 ? "lg:col-span-2" : ""}`}>
+            <p className="max-w-3xl text-pretty text-sm font-medium leading-relaxed text-[var(--muted)] sm:text-base">{reflection.prompt}</p>
+            <p className="mt-5 max-w-4xl whitespace-pre-wrap break-words text-pretty text-lg leading-relaxed text-[var(--ink)] sm:text-xl">{reflection.answer}</p>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -393,19 +460,25 @@ function Radar({ scores }: { scores: DimensionScores }) {
         <polygon points={polygon} fill="rgba(217,120,80,.24)" stroke="var(--accent)" strokeWidth="2.5" strokeLinejoin="round" />
         {dimensions.map((dimension, index) => { const [cx, cy] = point(index, scores[dimension]).split(","); return <circle key={dimension} cx={cx} cy={cy} r="4" fill="var(--ink)" />; })}
       </svg>
-      <div className="grid grid-cols-2 gap-x-5 gap-y-3 text-sm sm:grid-cols-4">
-        {dimensions.map((dimension) => <div key={dimension} className="flex items-baseline justify-between gap-2 border-b border-[var(--line)] pb-2"><span className="text-[var(--muted)]">{dimensionLabels[dimension]}</span><strong className="tabular font-medium">{scores[dimension]}</strong></div>)}
+      <div className="mt-2 grid gap-3 sm:grid-cols-2">
+        {dimensions.map((dimension) => (
+          <div key={dimension} className="rounded-[18px] bg-[var(--paper)] p-3.5 sm:p-4" aria-label={`${dimensionLabels[dimension]}: ${scores[dimension]} de 100`}>
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <span className="text-pretty text-sm font-medium leading-snug text-[var(--ink)] sm:text-[15px]">{dimensionLabels[dimension]}</span>
+              <strong className="font-editorial tabular shrink-0 text-2xl font-normal leading-none text-[var(--accent)]">{scores[dimension]}</strong>
+            </div>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
+              <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${scores[dimension]}%` }} />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 function InsightCard({ eyebrow, title, text, accent = false }: { eyebrow: string; title: string; text: string; accent?: boolean }) {
-  return <article className={`soft-card rounded-[28px] p-6 sm:p-8 ${accent ? "bg-[var(--paper-deep)]" : "bg-[var(--surface)]"}`}><p className="text-xs font-medium uppercase tracking-[.18em] text-[var(--accent)]">{eyebrow}</p><h3 className="font-editorial mt-3 text-balance text-3xl font-semibold leading-none tracking-[-.025em] sm:text-4xl">{title}</h3><p className="mt-4 text-pretty text-sm leading-relaxed text-[var(--muted)] sm:text-base">{text}</p></article>;
-}
-
-function Guidance({ number, title, text }: { number: string; title: string; text: string }) {
-  return <article className="soft-card rounded-[28px] bg-[var(--surface)] p-6 sm:p-8"><span className="font-editorial tabular text-3xl text-[var(--accent)]">{number}</span><h3 className="font-editorial mt-7 text-4xl font-semibold tracking-[-.03em]">{title}</h3><p className="mt-3 text-pretty leading-relaxed text-[var(--muted)]">{text}</p></article>;
+  return <article className={`soft-card rounded-[28px] p-6 sm:p-8 ${accent ? "bg-[var(--paper-deep)]" : "bg-[var(--surface)]"}`}><p className="text-xs font-medium uppercase tracking-[.18em] text-[var(--accent)]">{eyebrow}</p><h3 className="font-editorial mt-3 text-balance text-3xl font-normal leading-none tracking-[-.025em] sm:text-4xl">{title}</h3><p className="mt-4 text-pretty text-sm leading-relaxed text-[var(--muted)] sm:text-base">{text}</p></article>;
 }
 
 function createShareImage(title: string, score: number): Promise<Blob> {

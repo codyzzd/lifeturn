@@ -27,7 +27,7 @@ body {
     radial-gradient(circle at 85% 10%, rgba(255,255,255,.58), transparent 30rem),
     linear-gradient(135deg, var(--paper) 0%, #f9f4eb 52%, #f3ecdf 100%);
   color: var(--ink);
-  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 button, textarea, input { font: inherit; }
@@ -35,7 +35,10 @@ button { cursor: pointer; }
 
 ::selection { background: var(--accent-soft); color: var(--ink); }
 
-.font-editorial { font-family: "Cormorant Garamond", Georgia, serif; }
+.font-editorial {
+  font-family: "Belleza", Georgia, serif;
+  font-synthesis: none;
+}
 .text-balance { text-wrap: balance; }
 .text-pretty { text-wrap: pretty; }
 .tabular { font-variant-numeric: tabular-nums; }

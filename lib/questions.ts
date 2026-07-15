@@ -88,6 +88,9 @@ export const questions: Question[] = [
   ] },
   { id: "purpose-alignment", dimension: "purpose", eyebrow: "Propósito", prompt: "Quanto da sua vida atual parece alinhada ao que você considera realmente importante?", type: "range", min: 0, max: 100, step: 5, minLabel: "0%", maxLabel: "100%", scored: true },
 
+  { id: "love-care", dimension: "love", eyebrow: "Capacidade de amar", prompt: "As pessoas mais próximas de você — família, parceiro ou amigos — recebem tempo, atenção e cuidado compatíveis com a importância que têm na sua vida?", type: "single", options: frequency },
+  { id: "balance-space", dimension: "balance", eyebrow: "Equilíbrio", prompt: "Sua rotina deixa espaço real para relacionamentos, saúde, descanso e responsabilidades importantes, além de trabalho e entretenimento?", type: "single", options: frequency },
+
   { id: "open-pattern", dimension: "awareness", eyebrow: "Para levar com você", prompt: "Qual problema parece continuar se repetindo na sua vida?", type: "text", optional: true, scored: false, helper: "Opcional. Sua resposta fica somente neste dispositivo." },
   { id: "open-experience", dimension: "growth", eyebrow: "Para levar com você", prompt: "Qual experiência mais mudou você até hoje?", type: "text", optional: true, scored: false, helper: "Opcional. Escreva do seu jeito." },
   { id: "open-change", dimension: "purpose", eyebrow: "Para levar com você", prompt: "O que você sente que precisa mudar, mas continua adiando?", type: "text", optional: true, scored: false, helper: "Opcional. Talvez nomear já seja um começo." },
